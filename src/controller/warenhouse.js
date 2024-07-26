@@ -49,9 +49,26 @@ const post = async (req, res) => {
     }
 };
 
+const put = async (req, res) => {
+    try {
+        const data = await readFs(fileWarehouse);
+        const warehouseIndex = data.findIndex(warehouse => warehouse.id === parseInt(req.params.id));
+        if (warehouseIndex === -1) {
+            res.status(404).json({message: 'warehouse not found'});
+            return console.error('warehouse not found');
+        };
+        data[warehouseIndex] = {...data[warehouseIndex],...req.body};
+        await writeFs(fileWarehouse, data);
+        res.status(200).json({message: 'warehouse updated successfully', warehouse: data[warehouseIndex]});
+    } catch (err) {
+        console.error('error in the put method');
+    }
+};
+
 
 export { 
     getAll,
     post,
-    getOne
+    getOne,
+    put
 };
